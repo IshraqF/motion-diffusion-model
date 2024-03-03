@@ -1,4 +1,5 @@
 import os
+import wandb
 
 class TrainPlatform:
     def __init__(self, save_dir):
@@ -43,6 +44,34 @@ class TensorboardPlatform(TrainPlatform):
 
     def close(self):
         self.writer.close()
+
+class WandBPlatform(TrainPlatform):
+    def __init__(self, save_dir):
+        os.environ['WANDB_API_KEY'] = "2e7352b6116bddfa1c6ed1d71713e5ecb8e0ffcc"
+        wandb.login()
+        self.run = wandb.init(
+                project="Human-Motion-Diffusion",
+                name="Unconstrained Training",
+
+                config={
+                    "epochs": 3134,
+                    "steps": 1200000,
+                    "learining_rate": 1e-4,
+                    "batch_size": 64,
+                    "dataset": "HumanML",
+                }
+        )
+    
+    def report_scalar(self, name, value, iteration, group_name=None):
+        if group_name == 'Loss':
+            wandb.log({name: value}, step=iteration)
+        if group_name == 'Eval':
+            wandb.log({name: value}, step=iteration)
+        if group_name == 'Eval Unconstrained':
+            wandb.log({name: value}, step=iteration)
+    
+    def close(self):
+        wandb.finish()
 
 
 class NoPlatform(TrainPlatform):

@@ -11,7 +11,7 @@ from utils import dist_util
 from train.training_loop import TrainLoop
 from data_loaders.get_data import get_dataset_loader
 from utils.model_util import create_model_and_diffusion
-from train.train_platforms import ClearmlPlatform, TensorboardPlatform, NoPlatform  # required for the eval operation
+from train.train_platforms import ClearmlPlatform, TensorboardPlatform, WandBPlatform, NoPlatform  # required for the eval operation
 
 def main():
     args = train_args()
@@ -22,8 +22,8 @@ def main():
 
     if args.save_dir is None:
         raise FileNotFoundError('save_dir was not specified.')
-    elif os.path.exists(args.save_dir) and not args.overwrite:
-        raise FileExistsError('save_dir [{}] already exists.'.format(args.save_dir))
+    # elif os.path.exists(args.save_dir) and not args.overwrite:
+    #     raise FileExistsError('save_dir [{}] already exists.'.format(args.save_dir))
     elif not os.path.exists(args.save_dir):
         os.makedirs(args.save_dir)
     args_path = os.path.join(args.save_dir, 'args.json')
